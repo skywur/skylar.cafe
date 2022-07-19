@@ -1,130 +1,167 @@
-                        @keyframes cursor {
-                            0% {
-                                opacity: 0;
-                            }
-                            50% {
-                                opacity: 1;
-                            }
-                            100% {
-                                opacity: 0;
-                            }
-                        }
-                        
-                         ::selection {
-                            background: var(--selection);
-                            /* WebKit/Blink Browsers */
-                        }
-                        
-                         ::-moz-selection {
-                            background: var(--selection);
-                            /* Gecko Browsers */
-                        }
-                        /* width */
-                        
-                         ::-webkit-scrollbar {
-                            width: 10px;
-                        }
-                        /* Track */
-                        
-                         ::-webkit-scrollbar-track {
-                            background: var(--scrollbar-track-and-corner);
-                        }
-                        /* Handle */
-                        
-                         ::-webkit-scrollbar-thumb {
-                            background: var(--scrollbar-thumb);
-                        }
-                        
-                         ::-webkit-scrollbar-corner {
-                            background: var(--scrollbar-track-and-corner);
-                        }
-                        
-                        body {
-                            background: url(bg2.jpg);
-                            background-size: cover;
-                            background-repeat: no-repeat;
-                        }
-                        
-                        .container {
-                            width: 800px;
-                            height: 400px;
-                            position: absolute;
-                            top: 50%;
-                            left: 50%;
-                            transform: translate(-50%, -50%);
-                        }
-                        
-                        .console {
-                            width: 100%;
-                            height: 100%;
-                            font-family: Consolas, monaco, monospace;
-                            background: rgba(var(--main), 0.7);
-                            box-shadow: 0 0 20px 0px rgba(var(--main), 0.7);
-                            border-radius: 5px;
-                            box-sizing: border-box;
-                            padding: 8px;
-                            backdrop-filter: blur(3px);
-                            transition: 0.3s;
-                        }
-                        
-                        .console:hover {
-                            box-shadow: 0 0 40px 0px rgba(var(--main), 0.9);
-                            backdrop-filter: blur(5px);
-                        }
-                        
-                        .display {
-                            height: 100%;
-                            width: 100%;
-                            overflow-y: scroll;
-                        }
-                        
-                        .display__line,
-                        .display__typer {
-                            color: var(--console-text);
-                            font-size: 12px;
-                            margin: 1px 5px;
-                        }
-                        
-                        .display__typer {
-                            margin-top: 15px;
-                            color: var(--text-main);
-                        }
-                        
-                        .display__cursor {
-                            animation: none;
-                            opacity: 0;
-                            user-select: none;
-                            color: var(--text-alt);
-                        }
-                        
-                        .display__input {
-                            border: none;
-                            background: transparent;
-                            width: 0px;
-                            font-size: 12px;
-                            font-family: Consolas, monaco, monospace;
-                            color: var(--text-alt);
-                        }
-                        
-                        .display__input:focus {
-                            outline: none;
-                            color: var(--text-alt);
-                        }
-                        
-                        .display__input:focus+.display__cursor {
-                            animation: cursor 1s infinite;
-                            opacity: 1;
-                        }
-                        
-                        #tilde {
-                            color: var(--text-alt);
-                        }
-                        
-                        #pound {
-                            color: var(--text-main);
-                            padding-right: 3px;
-                        }
-                        
-                        #link {
-                            filter: saturate(150%) contrast(150%);
-                        }
+@import url('https://fonts.googleapis.com/css2?family=Readex+Pro&display=swap');
+@keyframes cursor {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+ ::selection {
+    background: var(--selection);
+    /* WebKit/Blink Browsers */
+}
+
+ ::-moz-selection {
+    background: var(--selection);
+    /* Gecko Browsers */
+}
+
+
+/* width */
+
+ ::-webkit-scrollbar {
+    width: 10px;
+}
+
+
+/* Track */
+
+ ::-webkit-scrollbar-track {
+    background: var(--scrollbar-track-and-corner);
+}
+
+
+/* Handle */
+
+ ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+}
+
+ ::-webkit-scrollbar-corner {
+    background: var(--scrollbar-track-and-corner);
+}
+
+body {
+    background: url(bg2.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    overflow-x: hidden;
+}
+
+.container {
+    width: 800px;
+    height: 400px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.console {
+    width: 100%;
+    height: 100%;
+    font-family: Consolas, monaco, monospace;
+    background: rgba(var(--main), 0.7);
+    box-shadow: 0 0 20px 0px rgba(var(--main), 0.7);
+    border-radius: 5px;
+    box-sizing: border-box;
+    padding: 8px;
+    backdrop-filter: blur(3px);
+    transition: 0.3s;
+}
+
+.console:hover {
+    box-shadow: 0 0 40px 0px rgba(var(--main), 0.9);
+    backdrop-filter: blur(5px);
+}
+
+.display {
+    height: 100%;
+    width: 100%;
+    overflow-y: scroll;
+}
+
+.display__line,
+.display__typer {
+    color: var(--console-text);
+    font-size: 12px;
+    margin: 1px 5px;
+}
+
+.display__typer {
+    margin-top: 15px;
+    color: var(--text-main);
+}
+
+.display__cursor {
+    animation: none;
+    opacity: 0;
+    user-select: none;
+    color: var(--text-alt);
+}
+
+.display__input {
+    border: none;
+    background: transparent;
+    width: 0px;
+    font-size: 12px;
+    font-family: Consolas, monaco, monospace;
+    color: var(--text-alt);
+}
+
+.display__input:focus {
+    outline: none;
+    color: var(--text-alt);
+}
+
+.display__input:focus+.display__cursor {
+    animation: cursor 1s infinite;
+    opacity: 1;
+}
+
+#tilde {
+    color: var(--text-alt);
+}
+
+#pound {
+    color: var(--text-main);
+    padding-right: 3px;
+}
+
+#link {
+    filter: hue-rotate(30deg) saturate(150%);
+}
+
+#start {
+    color: var(--start-text);
+}
+
+.devtext {
+    position: absolute;
+    bottom: 0;
+    padding: 20px;
+    color: var(--selection);
+    font-family: 'Readex Pro', sans-serif;
+}
+
+.devtext>a {
+    background: linear-gradient(45deg, var(--text-main), var(--start-text));
+    background-clip: text;
+    color: transparent;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-decoration: underline;
+    text-decoration-color: var(--scrollbar-thumb);
+    font-weight: bolder;
+    transition: 0.3s filter;
+    filter: brightness(80%);
+}
+
+.devtext>a:hover {
+    filter: brightness(100%);
+}

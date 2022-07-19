@@ -1,3 +1,5 @@
+//$TODO retype last input on up arrow keypress
+
 function randomIntFromInterval(min, max) { // min and max included 
     return Math.floor(Math.random() * (max - min + 1) + min)
 }
@@ -10,6 +12,7 @@ function setTheme() {
         document.documentElement.style.setProperty('--selection', '#81387f');
         document.documentElement.style.setProperty('--scrollbar-track-and-corner', 'rgba(22, 3, 21, 0.4)');
         document.documentElement.style.setProperty('--scrollbar-thumb', 'rgba(211, 34, 202, 0.3)');
+        document.documentElement.style.setProperty('--start-text', '#cad6e0');
         document.documentElement.style.setProperty('--console-text', '#A2C7E5');
         document.documentElement.style.setProperty('--text-main', '#d580e6');
         document.documentElement.style.setProperty('--text-alt', '#ffffff');
@@ -19,6 +22,7 @@ function setTheme() {
         document.documentElement.style.setProperty('--selection', '#8a362b');
         document.documentElement.style.setProperty('--scrollbar-track-and-corner', 'rgba31, 12, 0, 0.4)');
         document.documentElement.style.setProperty('--scrollbar-thumb', 'rgba(79, 31, 0, 0.3)');
+        document.documentElement.style.setProperty('--start-text', '#fcab7c');
         document.documentElement.style.setProperty('--console-text', '#ff5e00');
         document.documentElement.style.setProperty('--text-main', '#c70000');
         document.documentElement.style.setProperty('--text-alt', '#ffffff');
@@ -28,6 +32,7 @@ function setTheme() {
         document.documentElement.style.setProperty('--selection', '#6ab072');
         document.documentElement.style.setProperty('--scrollbar-track-and-corner', 'rgba(5, 38, 11, 0.4)');
         document.documentElement.style.setProperty('--scrollbar-thumb', 'rgba(10, 79, 22, 0.3)');
+        document.documentElement.style.setProperty('--start-text', '#a2f5d1');
         document.documentElement.style.setProperty('--console-text', '#3cfaa8');
         document.documentElement.style.setProperty('--text-main', '#3ee652');
         document.documentElement.style.setProperty('--text-alt', '#ffffff');
@@ -37,6 +42,7 @@ function setTheme() {
         document.documentElement.style.setProperty('--selection', '#81387f');
         document.documentElement.style.setProperty('--scrollbar-track-and-corner', 'rgba(22, 3, 21, 0.4)');
         document.documentElement.style.setProperty('--scrollbar-thumb', 'rgba(211, 34, 202, 0.3)');
+        document.documentElement.style.setProperty('--start-text', '#d1a7a1');
         document.documentElement.style.setProperty('--console-text', '#d47e72');
         document.documentElement.style.setProperty('--text-main', '#865bf5');
         document.documentElement.style.setProperty('--text-alt', '#ffffff');
@@ -155,7 +161,7 @@ const cmd = {
         ];
 
         for (t = 0; t < startText.length; t++) {
-            cmd.generate(startText[t]);
+            cmd.generateStart(startText[t]);
         }
 
     },
@@ -180,6 +186,16 @@ const cmd = {
         a.appendChild(link);
         a.href = text2;
         $display.insertBefore(a, $typer);
+    },
+    generateStart: (text) => {
+        const $display = document.getElementById('display');
+        const $typer = document.getElementById('typer');
+        let div = document.createElement('div');
+        div.classList.add('display__line');
+        div.setAttribute("id", "start")
+        div.textContent = text;
+
+        $display.insertBefore(div, $typer);
     },
 
     typer: () => {
