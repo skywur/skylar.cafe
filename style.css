@@ -93,6 +93,11 @@ body {
     margin: 1px 5px;
 }
 
+.display__line {
+    white-space: nowrap;
+    position: inline;
+}
+
 .display__typer {
     margin-top: 15px;
     color: var(--text-main);
@@ -139,6 +144,10 @@ body {
 
 #start {
     color: var(--start-text);
+}
+
+#white {
+    color: white;
 }
 
 .devtext {

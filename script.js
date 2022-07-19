@@ -93,6 +93,7 @@ const cmd = {
                     const what = cmd.commands[name].whatIs;
                     cmd.generate(name + ' - ' + what);
 
+
                 }
             },
             whatIs: 'This displays all of the commands and what they do.'
@@ -132,8 +133,6 @@ const cmd = {
             type: 'function',
             response: () => {
                 setTheme();
-                cmd.generate('‎')
-                cmd.generate('Theme randomized.')
             },
             whatIs: 'Randomizes the style of the page.'
         }
@@ -166,14 +165,15 @@ const cmd = {
 
     },
 
-    generate: (text) => {
+    generate: (text, text2) => {
         const $display = document.getElementById('display');
         const $typer = document.getElementById('typer');
         let div = document.createElement('div');
         div.classList.add('display__line');
-        div.textContent = text;
-
+        let newtext = text.replace(/-/g, '<span style="filter: brightness(500%)">-</span>');
+        div.innerHTML = newtext;
         $display.insertBefore(div, $typer);
+        div.style.color = text2;
     },
     generate2: (text, text2) => {
         const $display = document.getElementById('display');
@@ -269,3 +269,6 @@ const cmd = {
 }
 
 cmd.init();
+
+
+//drag
