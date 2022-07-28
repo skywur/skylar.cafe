@@ -58,6 +58,17 @@ function setTheme() {
     document.documentElement.style.setProperty('--text-alt', 'white');
 }
 
+function refreshImage(imgElement, imgURL) {
+    // create a new timestamp 
+    var timestamp = new Date().getTime();
+
+    var el = document.getElementById(imgElement);
+
+    var queryString = "?t=" + timestamp;
+
+    el.src = imgURL + queryString;
+}
+
 
 
 
@@ -138,7 +149,15 @@ const cmd = {
         randomize: {
             type: 'function',
             response: () => {
-                setTheme();
+                refreshImage("bg", "https://picsum.photos/1920/1080")
+                if (img.complete) {
+                    setTheme();
+                } else {
+                    img.addEventListener('load', function() {
+                        setTheme();
+                    });
+                }
+                console.log(document.getElementById("bg").src);
             },
             whatIs: 'Randomizes the style of the page.'
         }
@@ -290,3 +309,22 @@ cmd.init();
 
 
 //drag
+
+(function($) {
+
+    $(window).on('load', function() {
+        console.log("everything loaded");
+
+        const wrapper = document.getElementById("wrapper");
+        wrapper.style.opacity = "0";
+        wrapper.addEventListener('transitionend', () => wrapper.remove());
+
+    });
+
+    // and/or
+
+    $(document).ready(function() {
+        console.log("dom loaded");
+    });
+
+})(jQuery);
