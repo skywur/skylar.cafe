@@ -168,8 +168,8 @@ body {
 }
 
 .container {
-    width: 800px;
-    height: 400px;
+    width: clamp(500px, 40vw, 1600px);
+    height: clamp(300px, 40vh, 800px);
     position: absolute;
     top: 50%;
     left: 50%;
@@ -189,18 +189,6 @@ body {
     transition: 0.3s;
 }
 
-.console:hover {
-    backdrop-filter: blur(5px);
-}
-
-.console:hover>::-webkit-scrollbar {
-    filter: blur(5px);
-}
-
-.console:hover>.bar {
-    backdrop-filter: blur(5px);
-}
-
 .display {
     height: 100%;
     width: 100%;
@@ -215,16 +203,18 @@ body {
 }
 
 .display__line {
-    white-space: nowrap;
+    white-space: pre;
     position: inline;
 }
 
 .display__typer {
+    display: flex;
     margin-top: 15px;
     color: var(--text-main);
 }
 
 .display__cursor {
+    display: none;
     animation: none;
     opacity: 0;
     user-select: none;
@@ -232,16 +222,19 @@ body {
 }
 
 .display__input {
+    width:0;
+    flex-grow: 1;
     border: none;
     background: transparent;
-    width: 0px;
     font-size: 12px;
     font-family: 'Fira Code', monospace;
     color: var(--text-alt);
+    text-align: left;
 }
 
 .display__input:focus {
     outline: none;
+    caret-color: transparent;
     color: var(--text-alt);
 }
 

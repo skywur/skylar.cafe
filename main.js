@@ -1,5 +1,13 @@
 //$TODO retype last input on up arrow keypress
 
+window.onload = function(){
+   //document.getElementById('input').click();
+  }
+
+  function scrollToBottom() {
+    const terminal = document.querySelector('.display');
+    terminal.scrollTop = terminal.scrollHeight;
+}
 
 function randomIntFromInterval(min, max) { // min and max included 
     return Math.floor(Math.random() * (max - min + 1) + min)
@@ -48,6 +56,8 @@ function setTheme() {
     const sat = chroma(avg).saturate(2).brighten(1.5).hex();
     const desat = chroma(avg).desaturate().hex();
 
+    themeColors = [avg, light, lighter, dark, sat, desat];
+
     document.documentElement.style.setProperty('--main', hexToRGB(dark));
     document.documentElement.style.setProperty('--selection', desat);
     document.documentElement.style.setProperty('--scrollbar-track-and-corner', avg);
@@ -69,7 +79,31 @@ function refreshImage(imgElement, imgURL) {
     el.src = imgURL + queryString;
 }
 
+// Function to generate a gradient array
+function generateGradient(startColor, endColor, steps) {
+    var start = {
+        'R'     : parseInt(startColor.slice(1,3), 16),
+        'G'     : parseInt(startColor.slice(3,5), 16),
+        'B'     : parseInt(startColor.slice(5,7), 16)
+    }
+    var end = {
+        'R'     : parseInt(endColor.slice(1,3), 16),
+        'G'     : parseInt(endColor.slice(3,5), 16),
+        'B'     : parseInt(endColor.slice(5,7), 16)
+    }
+    diffR = end['R'] - start['R'];
+    diffG = end['G'] - start['G'];
+    diffB = end['B'] - start['B'];
 
+    stepsHex  = new Array();
+    for(var i = 0; i < steps; i++) {
+        var diffRed = start['R'] + ((diffR / steps) * i);
+        var diffGreen = start['G'] + ((diffG / steps) * i);
+        var diffBlue = start['B'] + ((diffB / steps) * i);
+        stepsHex[i] = '#' + Math.round(diffRed).toString(16).padStart(2, '0') + Math.round(diffGreen).toString(16).padStart(2, '0') + Math.round(diffBlue).toString(16).padStart(2, '0');
+    }
+    return stepsHex;
+}
 
 
 const cmd = {
@@ -98,6 +132,18 @@ const cmd = {
 
     history: [],
 
+    getPath: (path) => {
+        const parts = path.split('/').filter(Boolean); // filter out empty strings
+        let currentPath = '';
+        for (let part of parts) {
+            currentPath += '/' + part;
+            if (!(currentPath in cmd.fileSystem)) {
+                return null;
+            }
+        }
+        return { node: cmd.fileSystem[currentPath], path: currentPath };
+    },
+
     commands: {
         help: {
             type: 'function',
@@ -125,14 +171,14 @@ const cmd = {
             },
             whatIs: 'Links my socials.'
         },
-        print: {
+        echo: {
             type: 'function',
             response: (message) => {
                 if (message.length == 0) {
                     message = 'You need to specify something after print.'
                 }
                 cmd.generate('‎'),
-                    cmd.generate(message);
+                cmd.generate(message);
             },
             whatIs: 'Print out text.'
         },
@@ -151,17 +197,144 @@ const cmd = {
             response: () => {
                 refreshImage("bg", "https://picsum.photos/1920/1080")
                 if (img.complete) {
+                    let lines = document.getElementsByClassName('display__line');
+                    for (d = lines.length - 1; d >= 0; d--) {
+                        lines[d].parentNode.removeChild(lines[d]);
+                    }
+                    cmd.launch();
                     setTheme();
                 } else {
                     img.addEventListener('load', function() {
-                        setTheme();
+                        let lines = document.getElementsByClassName('display__line');
+                        for (d = lines.length - 1; d >= 0; d--) {
+                            lines[d].parentNode.removeChild(lines[d]);
+                        }
+                        cmd.launch();
+                    setTheme();
                     });
                 }
                 console.log(document.getElementById("bg").src);
             },
             whatIs: 'Randomizes the style of the page.'
-        }
+        },
+        neofetch: {
+            type: 'function',
+            response: async () => {
+                const getGeoLocation = async () => {
+                    const response = await fetch('https://geo.ipify.org/api/v1?apiKey=at_DAABotPF5TXSbLRIz2NSoKXbuG1w2');
+                    const data = await response.json();
+                    return data;
+                };
+        
+                let location;
+                try {
+                    location = await getGeoLocation();
+                } catch (error) {
+                    console.log('Error occurred: ' + error.message);
+                }
+
+                const lines = [
+'                             .oodMMMM',
+'                    .oodMMMMMMMMMMMMM',
+'        ..oodMMM  MMMMMMMMMMMMMMMMMMM',
+'  oodMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM',
+'  MMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM',
+'  MMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM',
+'  MMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM',
+'  MMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM',
+'  MMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM',
+'  ',
+'  MMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM',
+'  MMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM',
+'  MMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM',
+'  MMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM',
+'  MMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM',
+'  `^^^^^^MMMMMMM  MMMMMMMMMMMMMMMMMMM',
+'        ````^^^^  ^^MMMMMMMMMMMMMMMMM',
+'                       ````^^^^^^MMMM',
+                ];
+
+                const avg = chroma(colorThief.getColor(img)).brighten().hex();
+                const light = chroma(avg).brighten(1).hex();
+                const lighter = chroma(avg).brighten(2).hex();
+                const dark = chroma(avg).darken(2).hex();
+                const sat = chroma(avg).saturate(2).brighten(1.5).hex();
+                const desat = chroma(avg).desaturate().hex();
+
+                let themeColors = [avg, light, lighter, dark, sat, desat];
+
+                const boxes = themeColors.map(color => {
+                    return `<span style="color: ${color};">███</span>`;
+                }).join('');
+
+                const text = [
+                    
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    '   Browser: ' + navigator.userAgent.split(")")[0] + ')',
+                    '   Platform: ' + navigator.platform,
+                    '   Language: ' + navigator.language,
+                    '   # of Cores: ' + navigator.hardwareConcurrency,
+                    '',
+                    '   Memory Allocated: ' + navigator.deviceMemory + ' GiB',
+                    location ? '   Latitude: ' + location.location.lat : '   Could not get latitude',
+                    location ? '   Longitude: ' + location.location.lng : '   Could not get longitude',
+                    '   IP Address: ' + location.ip,
+                    ' ',
+                    '   ' + boxes, // Add colored boxes
+                    ' ',
+                    ' ',
+                ];
+
+                if ('geolocation' in navigator) {
+                    navigator.geolocation.getCurrentPosition((position) => {
+                        text[4] = 'Latitude: ' + position.coords.latitude;
+                        text[5] = 'Longitude: ' + position.coords.longitude;
+                        // ... rest of your code ...
+                    }, (error) => {
+                        text[4] = 'Error occurred: ' + error.message;
+                        // ... rest of your code ...
+                    });
+                } else {
+                    text[4] = 'Geolocation is not supported by this browser.';
+                    // ... rest of your code ...
+                }
+
+                const startColor = chroma(avg).saturate(2).brighten(1.5).hex();
+                const endColor = chroma(avg).saturate(2).brighten(-1).hex();
+                let coloredText = '';
+                const totalLength = lines.reduce((total, line) => total + line.length, 0);
+                const gradient = generateGradient(startColor, endColor, totalLength);
+                let gradientIndex = 0;
+                for(let j = 0; j < lines.length; j++) {
+                    for(let i = 0; i < lines[j].length; i++) {
+                        coloredText += `<span style="color: ${gradient[gradientIndex]}">${lines[j][i]}</span>`;
+                        gradientIndex++;
+                    }
+                    coloredText += ' ' + text[j] + '<br>'; // Add the corresponding text
+                }
+                cmd.generate('‎');
+                cmd.generate(coloredText);
+                cmd.generate('‎');
+                
+
+            },
+            whatIs: 'Displays System Information'
+        },
+        date: {
+            type: 'function',
+            response: () => {
+                const date = new Date();
+                cmd.generate('‎');
+                cmd.generate(date.toString());
+            },
+            whatIs: 'Prints the current date and time.'
+        },
     },
+    
 
     focusInput: () => {
         const $input = document.getElementsByClassName('display__input')[0];
@@ -177,10 +350,11 @@ const cmd = {
 
     launch: () => {
         const $display = document.getElementById('display');
-        const startText = ['skylar.cafe [Version 0.0.1]',
+        const startText = ['skylar.cafe [Version 1.0.0]',
             '(c) 2022 skywur.cc. All rights reserved.',
+            'Last login: ' + new Date().toLocaleString(),
             '‎',
-            'Get started by running the help command.',
+            'Type "help" to get a list of available commands.',
             '‎'
         ];
 
@@ -190,28 +364,35 @@ const cmd = {
 
     },
 
-    generate: (text, text2) => {
-        const $display = document.getElementById('display');
-        const $typer = document.getElementById('typer');
-        let div = document.createElement('div');
-        div.classList.add('display__line');
+    
 
-        var mapObj = {
-            "-": '<span style="color: white">-</span>',
-            "#": '<span style="color: white">#</span>'
-        };
+// Modified generate function
+generate: (text, startColor, endColor) => {
+    const $display = document.getElementById('display');
+    const $typer = document.getElementById('typer');
+    let div = document.createElement('div');
+    div.classList.add('display__line');
 
-        let str = text.replace(/-|#/gi, function(matched) {
-            return mapObj[matched];
-        });
+    let colors;
+    if (startColor && endColor) {
+        colors = generateGradient(startColor, endColor, text.length);
+    }
 
-        div.innerHTML = str;
-        $display.insertBefore(div, $typer);
+    let str = '';
+    for(let i = 0; i < text.length; i++) {
+        if(colors && colors[i]) {
+            str += '<span style="color: ' + colors[i] + '">' + text[i] + '</span>';
+            
+        } else {
+            str += text[i];
+        }
+        
+    }
 
-        div.style.color = text2;
-
-
-    },
+    div.innerHTML = str;
+    $display.insertBefore(div, $typer);
+    scrollToBottom();
+},
     generate2: (text, text2) => {
         const $display = document.getElementById('display');
         const $typer = document.getElementById('typer');
@@ -237,35 +418,43 @@ const cmd = {
 
     typer: () => {
         const $input = document.getElementsByClassName('display__input')[0];
-        let count = cmd.history.length;
-        let historyChoice;
+    $input.style.direction = 'ltr';
+    let historyIndex = cmd.history.length;
 
+    $input.addEventListener('keydown', function(e) {
+        if (e.which === 9) { // Tab key
+            e.preventDefault();
+            const currentInput = this.value.trim();
+            const commands = Object.keys(cmd.commands);
+            for (let i = 0; i < commands.length; i++) {
+                if (commands[i].startsWith(currentInput)) {
+                    this.value = commands[i];
+                    break;
+                }
+            }
+        }
+    });
+    
         $input.addEventListener('keyup', function(e) {
-            // cmd.responsiveInput(this.value);
-            if (e.which === 13) {
+            if (e.which === 13) { // Enter key
                 e.preventDefault();
-
                 cmd.responsiveInput(true);
                 cmd.callCommand(this.value);
                 cmd.history.push(this.value);
                 this.value = '';
-                count = cmd.history.length;
+                historyIndex = cmd.history.length;
             }
-
-            // 38 up
-            // 40 down
-            if (e.which === 38) {
-                if (count > 0) count--;
-                (count == cmd.history.length + 1) ? historyChoice = '': historyChoice = cmd.history[count];
-
-                $input.textContent = historyChoice;
+    
+            if (e.which === 38) { // Up arrow key
+                if (historyIndex > 0) historyIndex--;
+                $input.value = cmd.history[historyIndex] || '';
+                $input.dispatchEvent(new Event('input')); // Trigger input event
             }
-
-            if (e.which === 40) {
-                if (count < cmd.history.length) count++;
-                (count == cmd.history.length + 1) ? historyChoice = '': historyChoice = cmd.history[count];
-
-                $input.textContent = historyChoice;
+    
+            if (e.which === 40) { // Down arrow key
+                if (historyIndex < cmd.history.length) historyIndex++;
+                $input.value = cmd.history[historyIndex] || '';
+                $input.dispatchEvent(new Event('input')); // Trigger input event
             }
         });
     },
@@ -288,7 +477,7 @@ const cmd = {
 
             } else if (obj.type == 'function') {
                 switch (cmmd) {
-                    case 'print':
+                    case 'echo':
                         cmd.commands[cmmd].response(params);
                         break;
                         // add cases in when needed.
@@ -306,6 +495,7 @@ const cmd = {
 }
 
 cmd.init();
+
 
 
 //drag
