@@ -392,12 +392,12 @@ const cmd = {
                         ' ',
                     ],
                     [
-                        '',
+                        ' ',
                         'do you have a website? no?? why not??',
                         'sites aren\'t just for big businesses or developers', 
                         'they\'re for anyone who wants to distinguish themselves!!',
                         ' ',
-                        'if you\'re interested in a commission, or just have a cool idea, i\'d love to hear about it.',
+                        'if you\'re interested in a commission, or just have a cool idea, i\'d love to hear!',
                         'you can reach me thru any of my socials, they\'re easy to find <3',
                         ' ',
                     ]
@@ -414,8 +414,8 @@ const cmd = {
                     linesGenerated++;
                 
                     let site = sites[index];
-                    if (site.length < 86) {
-                        site += ' '.repeat(86 - site.length);
+                    if (site.length < 78) {
+                        site += ' '.repeat(78 - site.length);
                     }
                 
                     cmd.generate(`│(${index + 1}) <==  ${site}│`);
@@ -426,7 +426,7 @@ const cmd = {
                 
                     siteInfo[index].forEach(line => {
                         let text = line.trim();
-                        let paddingSize = (95 - text.length) / 2;
+                        let paddingSize = (87 - text.length) / 2;
                         let padding = ' '.repeat(Math.floor(paddingSize));
                         let extraSpace = paddingSize % 1 === 0 ? '' : ' ';
                         cmd.generate(`│${padding}${text}${padding}${extraSpace}│`);
@@ -436,7 +436,7 @@ const cmd = {
                     cmd.generate('├───────────────────────────────────────────────────────────────────────────────────────────────┤');
                     linesGenerated++;
                 
-                    cmd.generate('│       (1) Previous           |            (2) Next            |            (3) Exit           │');
+                    cmd.generate('│      (1) Previous          |           (2) Next           |          (3) Exit         │');
                     linesGenerated++;
                 
                     cmd.generate('└───────────────────────────────────────────────────────────────────────────────────────────────┘');
