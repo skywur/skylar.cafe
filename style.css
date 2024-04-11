@@ -186,6 +186,7 @@ body {
     box-sizing: border-box;
     padding: 8px;
     backdrop-filter: blur(3px);
+    overscroll-behavior: revert;
     transition: 0.3s;
 }
 
@@ -193,6 +194,7 @@ body {
     height: 100%;
     width: 100%;
     overflow-y: scroll;
+    
 }
 
 .display__line,
@@ -200,11 +202,38 @@ body {
     color: var(--console-text);
     font-size: 13px;
     margin: 1px 5px;
+    
 }
 
 .display__line {
     white-space: pre;
     position: inline;
+    height:0px;
+    
+}
+
+@keyframes slideInFromTop {
+    from { 
+        transform: translateY(-100%);
+        height: 0px;
+        opacity: 0;
+    }
+    to { 
+        transform: translateY(0);
+        height: 15px;
+        opacity: 1;
+    }
+}
+
+.display__line {
+    animation: slideInFromTop 0.01s ease-in;
+    animation-fill-mode: forwards;
+    opacity: 0;
+}
+
+/* Add a delay to the animation for each line */
+.display__line:nth-child(n) {
+    animation-delay: calc(n * 0.05s);
 }
 
 .display__typer {

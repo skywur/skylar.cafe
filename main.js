@@ -1,13 +1,51 @@
-//$TODO retype last input on up arrow keypress
-
 window.onload = function(){
    //document.getElementById('input').click();
-  }
 
-  function scrollToBottom() {
-    const terminal = document.querySelector('.display');
-    terminal.scrollTop = terminal.scrollHeight;
+// Create a new MutationObserver
+const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+        if (mutation.type === 'childList') {
+            const newElement = mutation.addedNodes[0];
+            if (newElement && newElement.classList.contains('display__line')) {
+                setTimeout(() => {
+                    const lines = Array.from($display.getElementsByClassName('display__line'));
+                    const target = lines.reduce((total, line) => total + line.offsetHeight, 0);
+                    smoothScrollTo(target);
+                }, 50); // Adjust delay as needed
+            }
+        }
+    });
+});
+
+// Start observing the container element for changes in its child list
+const $display = document.getElementById('display');
+observer.observe($display, { childList: true });
+
+// Smooth scrolling function
+function smoothScrollTo(target) {
+    const start = $display.scrollTop;
+    const change = target - start;
+    const duration = 1000; // Duration in ms, adjust as needed
+    let startTime = null;
+
+    function animateScroll(currentTime) {
+        if (!startTime) startTime = currentTime;
+        const timeElapsed = currentTime - startTime;
+        const next = easeInOutQuad(timeElapsed, start, change, duration);
+        $display.scrollTop = next;
+        if (timeElapsed < duration) requestAnimationFrame(animateScroll);
+    }
+
+    function easeInOutQuad(t, b, c, d) {
+        t /= d / 2;
+        if (t < 1) return c / 2 * t * t + b;
+        t--;
+        return -c / 2 * (t * (t - 2) - 1) + b;
+    }
+
+    requestAnimationFrame(animateScroll);
 }
+};
 
 function randomIntFromInterval(min, max) { // min and max included 
     return Math.floor(Math.random() * (max - min + 1) + min)
@@ -184,10 +222,22 @@ const cmd = {
         },
         clear: {
             type: 'function',
-            response: () => {
-                let lines = document.getElementsByClassName('display__line');
-                for (d = lines.length - 1; d >= 0; d--) {
-                    lines[d].parentNode.removeChild(lines[d]);
+            response: (linesToClear) => {
+                let lines = Array.from(document.getElementsByClassName('display__line'));
+                linesToClear = Number(linesToClear); // convert linesToClear to a number
+                if (isNaN(linesToClear)) { // if linesToClear is not a number, remove all lines
+                    for (let d = lines.length - 1; d >= 0; d--) {
+                        lines[d].parentNode.removeChild(lines[d]);
+                        console.log('NO PARAMETER PASSED | Removed line ' + d)
+                    }
+                } else { // if linesToClear is a number, remove that many lines from the end
+                    let stop = lines.length - linesToClear - 1; // calculate stopping condition before the loop
+                    for (let d = lines.length - 1; d > stop - 1; d--) {
+                        if (d >= 0) { // Check if the index is valid
+                            lines[d].parentNode.removeChild(lines[d]);
+                            console.log('Removed line ' + d)
+                        }
+                    }
                 }
             },
             whatIs: 'Remove all the previous lines.'
@@ -289,40 +339,28 @@ const cmd = {
                     ' ',
                 ];
 
-                if ('geolocation' in navigator) {
-                    navigator.geolocation.getCurrentPosition((position) => {
-                        text[4] = 'Latitude: ' + position.coords.latitude;
-                        text[5] = 'Longitude: ' + position.coords.longitude;
-                        // ... rest of your code ...
-                    }, (error) => {
-                        text[4] = 'Error occurred: ' + error.message;
-                        // ... rest of your code ...
-                    });
-                } else {
-                    text[4] = 'Geolocation is not supported by this browser.';
-                    // ... rest of your code ...
-                }
-
                 const startColor = chroma(avg).saturate(2).brighten(1.5).hex();
                 const endColor = chroma(avg).saturate(2).brighten(-1).hex();
                 let coloredText = '';
-                const totalLength = lines.reduce((total, line) => total + line.length, 0);
-                const gradient = generateGradient(startColor, endColor, totalLength);
-                let gradientIndex = 0;
-                for(let j = 0; j < lines.length; j++) {
-                    for(let i = 0; i < lines[j].length; i++) {
-                        coloredText += `<span style="color: ${gradient[gradientIndex]}">${lines[j][i]}</span>`;
-                        gradientIndex++;
-                    }
-                    coloredText += ' ' + text[j] + '<br>'; // Add the corresponding text
-                }
-                cmd.generate('‎');
-                cmd.generate(coloredText);
-                cmd.generate('‎');
-                
+        const totalLength = lines.reduce((total, line) => total + line.length, 0);
+        const gradient = generateGradient(startColor, endColor, totalLength);
+        let gradientIndex = 0;
+        for(let j = 0; j < lines.length; j++) {
+            for(let i = 0; i < lines[j].length; i++) {
+                coloredText += `<span style="color: ${gradient[gradientIndex]}">${lines[j][i]}</span>`;
+                gradientIndex++;
+            }
+            coloredText += ' ' + text[j] + '<br>'; // Add the corresponding text
+        }
 
-            },
-            whatIs: 'Displays System Information'
+        const coloredLines = coloredText.split('<br>');
+        cmd.generate('‎');
+        coloredLines.forEach(line => {
+            cmd.generate(line);
+        });
+        cmd.generate('‎');
+    },
+    whatIs: 'Displays System Information'
         },
         date: {
             type: 'function',
@@ -332,6 +370,99 @@ const cmd = {
                 cmd.generate(date.toString());
             },
             whatIs: 'Prints the current date and time.'
+        },
+        sites: {
+            type: 'function',
+            response: () => {
+                const sites = ['https://skylar.cafe', 'https://skywur.cc', 'https://your.site'];
+                const siteInfo = [
+                    [
+                        ' ',
+                        'as you\'ve probably noticed, skylar.cafe is the site you\'re currently on!',
+                        'i made this site after seeing several other very pretty',
+                        '(although basic) CLI sites just like it',
+                        'feel free to stay a while :)',
+                        ' ',
+                    ],
+                    [
+                        ' ',
+                        'this is my main personal site :3',
+                        'it has my most current links, projects, and creating it taught me a lot.',
+                        'i\'ve gone through quite a few versions of it, and it\'s likely that the version',
+                        'you see now is not the same as the one i\'m looking at while writing this',
+                        ' ',
+                    ],
+                    [
+                        '',
+                        'do you have a website? no?? why not??',
+                        'sites aren\'t just for big businesses or developers', 
+                        'they\'re for anyone who wants to distinguish themselves!!',
+                        ' ',
+                        'if you\'re interested in a commission, or just have a cool idea, i\'d love to hear about it.',
+                        'you can reach me thru any of my socials, they\'re easy to find <3',
+                        ' ',
+                    ]
+                ];
+                let currentIndex = 0;
+        
+                let linesGenerated = 0;
+
+                function displaySite(index) {
+                    cmd.commands.clear.response(linesGenerated - 1); // Clear the last lines generated
+                    linesGenerated = 0; // Reset the counter
+                
+                    cmd.generate('┌───────────────────────────────────────────────────────────────────────────────────────────────┐');
+                    linesGenerated++;
+                
+                    let site = sites[index];
+                    if (site.length < 86) {
+                        site += ' '.repeat(86 - site.length);
+                    }
+                
+                    cmd.generate(`│(${index + 1}) <==  ${site}│`);
+                    linesGenerated++;
+                
+                    cmd.generate('├───────────────────────────────────────────────────────────────────────────────────────────────┤');
+                    linesGenerated++;
+                
+                    siteInfo[index].forEach(line => {
+                        let text = line.trim();
+                        let paddingSize = (95 - text.length) / 2;
+                        let padding = ' '.repeat(Math.floor(paddingSize));
+                        let extraSpace = paddingSize % 1 === 0 ? '' : ' ';
+                        cmd.generate(`│${padding}${text}${padding}${extraSpace}│`);
+                        linesGenerated++;
+                    }); // Display the ASCII art for the site
+                
+                    cmd.generate('├───────────────────────────────────────────────────────────────────────────────────────────────┤');
+                    linesGenerated++;
+                
+                    cmd.generate('│       (1) Previous           |            (2) Next            |            (3) Exit           │');
+                    linesGenerated++;
+                
+                    cmd.generate('└───────────────────────────────────────────────────────────────────────────────────────────────┘');
+                    linesGenerated++;
+                }
+        
+                displaySite(currentIndex);
+        
+                function handleKeypress(event) {
+                    event.preventDefault(); // Prevent the keypress from being entered into the input
+                    if (event.key === '1') {
+                        currentIndex = (currentIndex - 1 + sites.length) % sites.length;
+                        displaySite(currentIndex);
+                    } else if (event.key === '2') {
+                        currentIndex = (currentIndex + 1) % sites.length;
+                        displaySite(currentIndex);
+                    } else if (event.key === '3') {
+                        document.removeEventListener('keypress', handleKeypress); // Remove the event listener
+                        cmd.commands.clear.response(linesGenerated - 1); // Clear the last lines generated
+                    }
+                }
+        
+                document.addEventListener('keypress', handleKeypress);
+            },
+            whatIs: 'Print out text.'
         },
     },
     
@@ -372,6 +503,11 @@ generate: (text, startColor, endColor) => {
     const $typer = document.getElementById('typer');
     let div = document.createElement('div');
     div.classList.add('display__line');
+    div.setAttribute("id", "display__line");
+
+    // Add animation delay
+    const lines = document.querySelectorAll('.display__line');
+    div.style.animationDelay = `${lines.length * 0.01}s`;
 
     let colors;
     if (startColor && endColor) {
@@ -382,16 +518,13 @@ generate: (text, startColor, endColor) => {
     for(let i = 0; i < text.length; i++) {
         if(colors && colors[i]) {
             str += '<span style="color: ' + colors[i] + '">' + text[i] + '</span>';
-            
         } else {
             str += text[i];
         }
-        
     }
 
     div.innerHTML = str;
     $display.insertBefore(div, $typer);
-    scrollToBottom();
 },
     generate2: (text, text2) => {
         const $display = document.getElementById('display');
