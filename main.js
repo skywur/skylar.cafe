@@ -204,7 +204,6 @@ const cmd = {
             response: () => {
                 cmd.generate2('Twitter', 'https://twitter.com/skywurrr')
                 cmd.generate2('Steam', 'https://steamcommunity.com/id/skywur/')
-                cmd.generate2('Pronouns.page', 'https://en.pronouns.page/@skywur')
                 cmd.generate2('skywur.cc', 'https://skywur.cc')
             },
             whatIs: 'Links my socials.'
@@ -462,7 +461,7 @@ const cmd = {
         
                 document.addEventListener('keypress', handleKeypress);
             },
-            whatIs: 'Print out text.'
+            whatIs: 'Shows a list of sites and information about them.'
         },
     },
     
