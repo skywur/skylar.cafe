@@ -1,6 +1,18 @@
 window.onload = function(){
    //document.getElementById('input').click();
 
+   fetch('https://api.github.com/repos/skywur/skylar.cafe/commits')
+   .then(response => response.json())
+   .then(data => {
+       const latestCommit = data[0];
+       const commitLink = latestCommit.html_url;
+       const commitSha = latestCommit.sha.substring(0, 7);
+
+       const devtextElement = document.querySelector('.commit');
+       devtextElement.innerHTML = `<a href="${commitLink}">${commitSha}</a>`;
+   })
+   .catch(error => console.error('Error:', error));
+
 // Create a new MutationObserver
 const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {

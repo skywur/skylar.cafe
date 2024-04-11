@@ -306,7 +306,6 @@ body {
     background-clip: text;
     color: transparent;
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
     text-decoration: underline;
     text-decoration-color: var(--scrollbar-thumb);
     font-weight: bolder;
@@ -315,4 +314,8 @@ body {
 
 .devtext>a:hover {
     filter: brightness(130%);
+}
+
+.commit>a {
+    color: transparent !important;
 }
