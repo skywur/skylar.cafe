@@ -492,7 +492,12 @@ const cmd = {
 
     launch: () => {
         const $display = document.getElementById('display');
-        const startText = ['skylar.cafe [Version 1.0.0]',
+        fetch('https://api.github.com/repos/skywur/skylar.cafe/commits')
+        .then(response => response.json())
+        .then(data => {
+            const latestCommit = data[0];
+            const commitSha = latestCommit.sha.substring(0, 7);
+            const startText = [`skylar.cafe [Version ${commitSha}]`,
             '(c) 2022 skywur.cc. All rights reserved.',
             'Last login: ' + new Date().toLocaleString(),
             '‎',
@@ -503,6 +508,8 @@ const cmd = {
         for (t = 0; t < startText.length; t++) {
             cmd.generateStart(startText[t]);
         }
+        })
+        .catch(error => console.error('Error:', error));
 
     },
 
